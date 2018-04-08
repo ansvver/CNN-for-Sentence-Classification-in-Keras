@@ -36,10 +36,12 @@ np.random.seed(0)
 model_type = "CNN-non-static"  # CNN-rand|CNN-non-static|CNN-static
 
 # Data source
-data_source = "keras_data_set"  # keras_data_set|local_dir
+#data_source = "keras_data_set"  # keras_data_set|local_dir
+data_source = "customed"  # keras_data_set|local_dir|customed
 
 # Model Hyperparameters
-embedding_dim = 50
+#embedding_dim = 50
+embedding_dim = 300
 filter_sizes = (3, 8)
 num_filters = 10
 dropout_prob = (0.5, 0.8)
@@ -47,7 +49,8 @@ hidden_dims = 50
 
 # Training parameters
 batch_size = 64
-num_epochs = 10
+#num_epochs = 10
+num_epochs = 50
 
 # Prepossessing parameters
 sequence_length = 400
@@ -62,7 +65,7 @@ context = 10
 
 
 def load_data(data_source):
-    assert data_source in ["keras_data_set", "local_dir"], "Unknown data source"
+    assert data_source in ["keras_data_set", "local_dir", "customed"], "Unknown data source"
     if data_source == "keras_data_set":
         (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_words, start_char=None,
                                                               oov_char=None, index_from=None)
@@ -73,7 +76,7 @@ def load_data(data_source):
         vocabulary = imdb.get_word_index()
         vocabulary_inv = dict((v, k) for k, v in vocabulary.items())
         vocabulary_inv[0] = "<PAD/>"
-    else:
+    elif data_source == "local_dir":
         x, y, vocabulary, vocabulary_inv_list = data_helpers.load_data()
         vocabulary_inv = {key: value for key, value in enumerate(vocabulary_inv_list)}
         y = y.argmax(axis=1)
@@ -87,6 +90,8 @@ def load_data(data_source):
         y_train = y[:train_len]
         x_test = x[train_len:]
         y_test = y[train_len:]
+    else:
+        
 
     return x_train, y_train, x_test, y_test, vocabulary_inv
 
